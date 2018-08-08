@@ -2,4 +2,5 @@
 
 npm init <br>
 npm install --save express <br>
-npm install -g nodemon (ou --save-dev para desenvolvimento , -g é global somente) <br>
+npm install -g nodemon <br>
+npm install --save consign (ajuda no gerenciar as rotas)<br>
