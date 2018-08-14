@@ -36,10 +36,34 @@ module.exports = function(app){
       }
     }
 
+    var conn = function(){
+      var connection = app.persistencia.connectionFactory();
+      return new app.persistencia.PagamentoDAO(connection);
+    }
+
     //Teste
     app.get('/pagamentos', function(req, res){
       console.log('Recebida requisicao de teste na porta 3000.')
       res.send('OK.');
+    });
+
+    //buscar pagamento
+    app.get('/pagamentos/pagamentos/:id', function(req, res){
+      var id = req.params.id;
+      console.log('consultando pagamento: '+id);      
+  
+      var pagamentoDao = conn();
+
+      pagamentoDao.buscaPorId(id, function(erro, resultado){
+        if(erro){
+          console.log('erro ao consultar no banco: '+erro);
+          res.status(500).send(erro);
+          return;
+        }
+        console.log('pagamento encontrado: '+ JSON.stringify(resultado));
+        res.json(resultado);
+      });
+
     });
   
     //Cria um Pagamento
@@ -63,8 +87,7 @@ module.exports = function(app){
       pagamento.status = PAGAMENTO_CRIADO;
       pagamento.data = new Date;
   
-      var connection = app.persistencia.connectionFactory();
-      var pagamentoDAO = new app.persistencia.PagamentoDAO(connection);
+      var pagamentoDAO = conn();
   
       pagamentoDAO.salva(pagamento, function(erro, resultado){
         if(erro){
@@ -118,8 +141,7 @@ module.exports = function(app){
       pagamento.id = id;
       pagamento.status = PAGAMENTO_CONFIRMADO;
   
-      var connection = app.persistencia.connectionFactory();
-      var pagamentoDao = new app.persistencia.PagamentoDAO(connection);
+      var pagamentoDao = conn();
   
       pagamentoDao.atualiza(pagamento, function(erro){
           if (erro){
@@ -141,8 +163,7 @@ module.exports = function(app){
       pagamento.id = id;
       pagamento.status = PAGAMENTO_CANCELADO;
   
-      var connection = app.persistencia.connectionFactory();
-      var pagamentoDao = new app.persistencia.PagamentoDAO(connection);
+      var pagamentoDao = conn();
   
       pagamentoDao.atualiza(pagamento, function(erro){
           if (erro){
