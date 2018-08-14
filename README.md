@@ -1,6 +1,6 @@
-## NodeJS PayFast
+# NodeJS PayFast
 
-```
+```sh
 npm init
 npm install
 docker pull mysql
@@ -21,7 +21,7 @@ CREATE TABLE `pagamentos` (
    PRIMARY KEY (id)
   );
 ```
-# Serviço de Cartões
+## Serviço de Cartões
 ```
 curl http://localhost:3001/cartoes/autoriza -X POST -v -H "Content-type: application/json" -d @files/cartao.json | json_pp
 ```
