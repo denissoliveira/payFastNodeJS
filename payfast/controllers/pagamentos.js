@@ -1,3 +1,5 @@
+var logger = require('../servicos/logger.js');
+
 module.exports = function(app){
 
     const PAGAMENTO_CRIADO = "CRIADO";
@@ -43,24 +45,24 @@ module.exports = function(app){
 
     //Teste
     app.get('/pagamentos', function(req, res){
-      console.log('Recebida requisicao de teste na porta 3000.')
+      logger.info('Recebida requisicao de teste na porta 3000.')
       res.send('OK.');
     });
 
     //buscar pagamento
     app.get('/pagamentos/pagamentos/:id', function(req, res){
       var id = req.params.id;
-      console.log('consultando pagamento: '+id);      
+      logger.info('consultando pagamento: '+id);
   
       var pagamentoDao = conn();
 
       pagamentoDao.buscaPorId(id, function(erro, resultado){
         if(erro){
-          console.log('erro ao consultar no banco: '+erro);
+          logger.error('erro ao consultar no banco: '+erro);
           res.status(500).send(erro);
           return;
         }
-        console.log('pagamento encontrado: '+ JSON.stringify(resultado));
+        logger.info('pagamento encontrado: '+ JSON.stringify(resultado));
         res.json(resultado);
       });
 
@@ -76,13 +78,13 @@ module.exports = function(app){
       var erros = req.validationErrors();
   
       if (erros){
-        console.log('Erros de validacao encontrados');
+        logger.error('Erros de validacao encontrados');
         res.status(400).send(erros);
         return;
       }
   
       var pagamento = req.body["pagamento"];
-      console.log('processando uma requisicao de um novo pagamento');
+      logger.info('processando uma requisicao de um novo pagamento');
   
       pagamento.status = PAGAMENTO_CRIADO;
       pagamento.data = new Date;
@@ -91,26 +93,26 @@ module.exports = function(app){
   
       pagamentoDAO.salva(pagamento, function(erro, resultado){
         if(erro){
-          console.log('Erro ao inserir no banco:' + erro);
+          logger.error('Erro ao inserir no banco:' + erro);
           res.status(500).send(erro);
         } else {
         pagamento.id = resultado.insertId;
-        console.log('pagamento criado');
+        logger.info('pagamento criado');
   
         if (pagamento.forma_de_pagamento == 'cartao'){
           var cartao = req.body["cartao"];
-          console.log(cartao);
+          logger.info(cartao);
           
           var clienteCartoes = new app.servicos.CartoesClient();
   
           clienteCartoes.autoriza(cartao,
               function(exception, request, response, retorno){
                 if(exception){
-                  console.log(exception);
+                  logger.error(exception);
                   res.status(400).send(exception);
                   return;
                 }
-                console.log(retorno);
+                logger.info(retorno);
   
                 res.location('/pagamentos/pagamento/' + pagamento.id);
   
@@ -145,10 +147,11 @@ module.exports = function(app){
   
       pagamentoDao.atualiza(pagamento, function(erro){
           if (erro){
+            logger.error(erro);
             res.status(500).send(erro);
             return;
           }
-          console.log('Pagamento Confirmado');
+          logger.info('Pagamento Confirmado');
           var response = resposta(pagamento,false,true);
           res.send(response);
       });
@@ -167,10 +170,11 @@ module.exports = function(app){
   
       pagamentoDao.atualiza(pagamento, function(erro){
           if (erro){
+            logger.error(erro);
             res.status(500).send(erro);
             return;
           }
-          console.log('Pagamento cancelado');
+          logger.info('Pagamento cancelado');
           res.status(204).send(pagamento);
       });
     });
