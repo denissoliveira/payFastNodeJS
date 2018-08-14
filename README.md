@@ -32,3 +32,8 @@ curl http://localhost:3001/cartoes/autoriza -X POST -v -H "Content-type: applica
 ```sh
 curl -X POST http://localhost:3000/upload/imagem --data-binary @img.png -H "Content-type: application/octet-stream" -v -H "filename: imagem.png"
 ```
+
+# Executando em cluster
+```
+nodemon cluster.js
+```
