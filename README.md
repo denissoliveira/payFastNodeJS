@@ -23,7 +23,12 @@ CREATE TABLE `pagamentos` (
    PRIMARY KEY (id)
   );
 ```
-## Serviço de Cartões
-```
+### Serviço de Cartões
+```sh
 curl http://localhost:3001/cartoes/autoriza -X POST -v -H "Content-type: application/json" -d @files/cartao.json | json_pp
+```
+
+### Envio de arquivo
+```sh
+curl -X POST http://localhost:3000/upload/imagem --data-binary @img.png -H "Content-type: application/octet-stream" -v -H "filename: imagem.png"
 ```
