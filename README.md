@@ -6,10 +6,12 @@ npm install
 docker pull mysql
 docker run --name dbFast -e MYSQL_ROOT_PASSWORD=mysql -d mysql:5.7.23
 mysql -h localhost -u root -p
+```
+
+```sql
 create database payfast;
 use payfast;
-```
-```sql
+
 CREATE TABLE `pagamentos` (
     `id` int(11) NOT NULL AUTO_INCREMENT,
   `forma_de_pagamento` varchar(255) NOT NULL,
